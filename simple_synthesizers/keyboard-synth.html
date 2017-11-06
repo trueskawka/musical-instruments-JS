@@ -1,0 +1,42 @@
+<html>
+  <body>
+    <button onclick="con.resume()">start!</button>
+    <button onclick="con.suspend()">stop!</button>
+    <div
+        style="background: black; height: 200px; width: 200px;"
+        tabindex="1"
+        onkeydown="setNote(event.key)"
+    ></div>
+  </body>
+  <script>
+    var con;
+    var osc;
+    window.addEventListener('load', init, false);
+    function init() {
+      try {
+        var audio_context = window.AudioContext || window.webkitAudioContext;
+        con = new audio_context();
+        osc = con.createOscillator();
+        osc.connect(con.destination);
+        osc.frequency.value = 400;
+        osc.start();
+      }
+      catch(e) {
+        alert('Web Audio API is not supported in this browser');
+      }
+    }
+    function setNote(key) {
+      switch(key) {
+        case("z"):
+          osc.frequency.value = 261.63;
+          break;
+        case("x"):
+          osc.frequency.value = 293.66;
+          break;
+        case("c"):
+          osc.frequency.value = 329.63;
+          break;
+      }
+    }
+  </script>
+</html>

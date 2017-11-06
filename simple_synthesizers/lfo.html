@@ -1,0 +1,39 @@
+<html>
+  <body>
+    <button onclick="con.resume()">start!</button>
+    <button onclick="con.suspend()">stop!</button>
+    <div
+      style = "background: linear-gradient(yellow 5%, orange 95%); height: 400px; width: 100px;"
+      onmousemove = "lfo.frequency.value = event.clientY"
+    ></div>
+  </body>
+  <script>
+  var con, osc, lfo, lfo_amp;
+  window.addEventListener('load', init, false);
+  function init() {
+    try {
+      var audio_context = window.AudioContext || window.webkitAudioContext;
+      con = new audio_context();
+      osc = con.createOscillator();
+      lfo = con.createOscillator();
+
+      // amplify lfo
+      lfo_amp = con.createGain();
+
+      lfo_amp.gain.value = 300;
+      osc.frequency.value = 100;
+      lfo.frequency.value = 0.5;
+
+      lfo.connect(lfo_amp);
+      lfo_amp.connect(osc.frequency);
+      osc.connect(con.destination);
+
+      osc.start();
+      lfo.start();
+    }
+    catch(e) {
+      alert('Web Audio API is not supported in this browser');
+    }
+  }
+  </script>
+</html>

@@ -1,0 +1,23 @@
+<html>
+  <body>
+    <button onclick="con.resume()">start!</button>
+    <button onclick="con.suspend()">stop!</button>
+  </body>
+  <script>
+  var con;
+  var osc;
+  window.addEventListener('load', init, false);
+  function init() {
+    try {
+      var audio_context = window.AudioContext || window.webkitAudioContext;
+      con = new audio_context();
+      osc = con.createOscillator();
+      osc.connect(con.destination);
+      osc.start();
+    }
+    catch(e) {
+      alert('Web Audio API is not supported in this browser');
+    }
+  }
+  </script>
+</html>

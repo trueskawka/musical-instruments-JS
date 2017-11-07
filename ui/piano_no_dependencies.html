@@ -1,0 +1,145 @@
+<html>
+  <style>
+    .white {
+      background: white;
+      width: 36px;
+      height: 123px;
+      border: 1px solid black;
+      text-align: center;
+      vertical-align: bottom;
+      line-height: 180px;
+      float: left;
+    }
+    .black {
+      background: black;
+      width: 36px;
+      height: 67px;
+      border: 1px solid white;
+      color: white;
+      text-align: center;
+      vertical-align: bottom;
+      line-height: 100px;
+      float: left;
+    }
+    #whites {
+      z-index: -1;
+    }
+    #blacks {
+      position: absolute;
+      left: 24px;
+      top: 6px;
+      z-index: 1;
+    }
+    #piano {
+      width: 100%;
+      margin: 0 auto;
+    }
+  </style>
+  <body>
+    <div id="piano">
+      <div id="blacks">
+        <div class="black" id="a">a</div>
+        <div class="black" id="s" style="margin-right: 38px;">s</div>
+        <div class="black" id="d">d</div>
+        <div class="black" id="f">f</div>
+        <div class="black" id="g" style="margin-right: 38px;">g</div>
+        <div class="black" id="1">1</div>
+        <div class="black" id="2" style="margin-right: 38px;">2</div>
+        <div class="black" id="3">3</div>
+        <div class="black" id="4">4</div>
+        <div class="black" id="5">5</div>
+      </div>
+      <div id="whites">
+        <div class="white" id="z">z</div>
+        <div class="white" id="x">x</div>
+        <div class="white" id="c">c</div>
+        <div class="white" id="v">v</div>
+        <div class="white" id="b">b</div>
+        <div class="white" id="n">n</div>
+        <div class="white" id="m">m</div>
+        <div class="white" id="q">q</div>
+        <div class="white" id="w">w</div>
+        <div class="white" id="e">e</div>
+        <div class="white" id="r">r</div>
+        <div class="white" id="t">t</div>
+        <div class="white" id="y">y</div>
+        <div class="white" id="u">u</div>
+      </div>
+    </div>
+  </body>
+  <script>
+    var con;
+    window.addEventListener('load', init, false);
+    function init() {
+      try {
+        var audio_context = window.AudioContext || window.webkitAudioContext;
+        con = new audio_context();
+      }
+      catch(e) {
+        alert('Web Audio API is not supported in this browser');
+      }
+    }
+
+    function playSynth(note) {
+      var osc = con.createOscillator();
+      var amp = con.createGain();
+
+      osc.frequency.value = note;
+
+      osc.connect(amp);
+
+      var now = con.currentTime;
+      amp.gain.value = 0;
+      amp.gain.setValueAtTime(0.5, now + 0.1);
+      amp.gain.linearRampToValueAtTime(0, now + 1);
+      // triangle square sine
+      osc.type = "sine";
+
+      amp.connect(con.destination);
+      osc.start();
+      osc.stop(now + 1.1);
+    }
+
+    var sound_dict = {
+      'z': 130.8127826503,
+      'a': 138.5913154884,
+      'x': 146.8323839587,
+      's': 155.5634918610,
+      'c': 164.8137784564,
+      'v': 174.6141157165,
+      'd': 184.9972113558,
+      'b': 195.9977179909,
+      'f': 207.6523487900,
+      'n': 220.0000000000,
+      'g': 233.0818807590,
+      'm': 246.9416506281,
+
+      'q': 261.6255653006,
+      '1': 277.1826309769,
+      'w': 293.6647679174,
+      '2': 311.1269837221,
+      'e': 329.6275569129,
+      'r': 349.2282314330,
+      '3': 369.9944227116,
+      't': 391.9954359817,
+      '4': 415.3046975799,
+      'y': 440.0000000000,
+      '5': 466.1637615181,
+      'u': 493.8833012561,
+
+      'i': 523.2511306012
+    }
+
+    function animateKey(keyID) {
+      var bg = document.getElementById(keyID).style.background;
+      document.getElementById(keyID).style.background = "deeppink";
+      setTimeout(function() { document.getElementById(keyID).style.background = bg }, 600);
+    }
+
+    document.onkeypress = function(e) {
+      animateKey(e.key);
+      playSynth(sound_dict[e.key]);
+    }
+  </script>
+
+</html>

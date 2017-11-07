@@ -1,0 +1,43 @@
+<html>
+  <body>
+    <button onclick="con.resume()">start!</button>
+    <button onclick="con.suspend()">stop!</button>
+    <div
+      style="background: orange; height: 100px; width: 100px"
+      tabindex="0"
+      onkeydown ="playSynth()">
+    </div>
+  </body>
+  <script>
+  var con;
+  window.addEventListener('load', init, false);
+  function init() {
+    try {
+      var audio_context = window.AudioContext || window.webkitAudioContext;
+      con = new audio_context();
+    }
+    catch(e) {
+      alert('Web Audio API is not supported in this browser');
+    }
+  }
+  function playSynth() {
+    var osc = con.createOscillator();
+    var amp = con.createGain();
+
+    osc.frequency.value = Math.random() * 500;
+
+    osc.connect(amp);
+
+    var now = con.currentTime;
+    amp.gain.value = 0;
+    amp.gain.linearRampToValueAtTime(0.1, now + 2);
+    amp.gain.linearRampToValueAtTime(0, now + 4);
+    // triangle square sine
+    osc.type = "sine";
+
+    amp.connect(con.destination);
+    osc.start();
+    osc.stop(now + 4.1);
+  }
+  </script>
+</html>

@@ -1,0 +1,43 @@
+<html>
+  <body>
+    <button onclick="con.resume()">start!</button>
+    <button onclick="con.suspend()">stop!</button>
+    <div
+      style="background: black; height: 400px; width: 400px"
+      tabindex="1"
+      onmousemove="changeFilter(event.clientX, event.clientY)"
+    >
+
+    </div>
+  </body>
+  <script>
+  var con, osc, filter;
+  window.addEventListener('load', init, false);
+  function init() {
+    try {
+      var audio_context = window.AudioContext || window.webkitAudioContext;
+      con = new audio_context();
+      osc = con.createOscillator();
+      filter = con.createBiquadFilter();
+
+      osc.connect(filter);
+      filter.connect(con.destination);
+
+      osc.frequency.value = 200;
+      filter.frequency.value = 100;
+
+      // richest harmonic waveform
+      osc.type = "sawtooth";
+      osc.start();
+    }
+    catch(e) {
+      alert('Web Audio API is not supported in this browser');
+    }
+  }
+  function changeFilter(mx, my) {
+    filter.frequency.value = mx * 10;
+    // emphasis/resonance on the filter
+    filter.Q.value = my / 10;
+  }
+  </script>
+</html>

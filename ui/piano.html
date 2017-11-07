@@ -1,0 +1,83 @@
+<html>
+  <body>
+    <div
+      id="piano"
+    ></div>
+  </body>
+  <script type="text/javascript" src="../nexusui.js"></script>
+  <script>
+    var con;
+    window.addEventListener('load', init, false);
+    function init() {
+      try {
+        var audio_context = window.AudioContext || window.webkitAudioContext;
+        con = new audio_context();
+      }
+      catch(e) {
+        alert('Web Audio API is not supported in this browser');
+      }
+    }
+
+    function playSynth(note) {
+      var osc = con.createOscillator();
+      var amp = con.createGain();
+
+      osc.frequency.value = note;
+
+      osc.connect(amp);
+
+      var now = con.currentTime;
+      amp.gain.value = 0;
+      amp.gain.setValueAtTime(0.5, now + 0.1);
+      amp.gain.linearRampToValueAtTime(0, now + 1);
+      // triangle square sine
+      osc.type = "sine";
+
+      amp.connect(con.destination);
+      osc.start();
+      osc.stop(now + 1.1);
+    }
+
+    var sound_dict = {
+      'z': [48, 130.8127826503],
+      'a': [49, 138.5913154884],
+      'x': [50, 146.8323839587],
+      's': [51, 155.5634918610],
+      'c': [52, 164.8137784564],
+      'v': [53, 174.6141157165],
+      'd': [54, 184.9972113558],
+      'b': [55, 195.9977179909],
+      'f': [56, 207.6523487900],
+      'n': [57, 220.0000000000],
+      'g': [58, 233.0818807590],
+      'm': [59, 246.9416506281],
+
+      'q': [60, 261.6255653006],
+      '1': [61, 277.1826309769],
+      'w': [62, 293.6647679174],
+      '2': [63, 311.1269837221],
+      'e': [64, 329.6275569129],
+      'r': [65, 349.2282314330],
+      '3': [66, 369.9944227116],
+      't': [67, 391.9954359817],
+      '4': [68, 415.3046975799],
+      'y': [69, 440.0000000000],
+      '5': [70, 466.1637615181],
+      'u': [71, 493.8833012561]
+    }
+
+    var piano = new Nexus.Piano("#piano", {
+      'size': [500,125],
+      'mode': 'button',
+      'lowNote': 48,
+      'highNote': 72
+    });
+
+    document.onkeypress = function(e) {
+      piano.toggleKey(sound_dict[e.key][0]);
+      playSynth(sound_dict[e.key][1]);
+      setTimeout(function() { piano.toggleKey(sound_dict[e.key][0]) }, 200);
+    }
+  </script>
+
+</html>
